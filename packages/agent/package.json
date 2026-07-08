@@ -21,7 +21,8 @@
                          "@lupaflow/types":  "workspace:*",
                          "@lupaflow/providers":  "workspace:*",
                          "@lupaflow/tools":  "workspace:*",
-                         "@lupaflow/memory":  "workspace:*"
+                         "@lupaflow/memory":  "workspace:*",
+                         "@lupaflow/plugins": "workspace:*"
                      },
     "devDependencies":  {
                             "tsup":  "^8.3.0",

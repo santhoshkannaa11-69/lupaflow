@@ -15,7 +15,7 @@ export class ContextManager {
     this.config = {
       maxMessages: config.maxMessages || 50,
       maxTokens: config.maxTokens || 4000,
-      preserveSystem: true,
+      preserveSystem: config.preserveSystem ?? true,
     }
   }
 

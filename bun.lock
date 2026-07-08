@@ -20,6 +20,7 @@
       "dependencies": {
         "@lupaflow/core": "workspace:*",
         "@lupaflow/memory": "workspace:*",
+        "@lupaflow/plugins": "workspace:*",
         "@lupaflow/providers": "workspace:*",
         "@lupaflow/tools": "workspace:*",
         "@lupaflow/types": "workspace:*",

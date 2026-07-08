@@ -8,6 +8,14 @@ import { buildSystemPrompt } from "./config"
 import { generateId } from "@lupaflow/core"
 import { globalEventBus } from "@lupaflow/core"
 import { ToolError } from "@lupaflow/core"
+import {
+  runBeforeAgentRunHooks,
+  runAfterAgentRunHooks,
+  runBeforeToolCallHooks,
+  runAfterToolCallHooks,
+  runBeforeProviderCallHooks,
+  runAfterProviderCallHooks,
+} from "@lupaflow/plugins"
 
 export interface AgentRunOptions {
   input: string
@@ -63,6 +71,11 @@ export class AgentRunner {
 
     const systemPrompt = buildSystemPrompt(this.config)
 
+    runBeforeAgentRunHooks({
+      input: options.input,
+      ...this.config,
+    } as any)
+
     this.context.add({ role: "system", content: systemPrompt })
     this.context.add({ role: "user", content: options.input })
 
@@ -86,10 +99,20 @@ export class AgentRunner {
     while (iterationCount < maxIterations) {
       iterationCount++
 
+      const request = runBeforeProviderCallHooks(this.config.provider, {
+        model: this.config.model,
+        messages: this.context.getMessages(),
+        tools: this.config.tools,
+        systemPrompt: undefined,
+        temperature: this.config.temperature,
+        maxTokens: this.config.maxTokens,
+        topP: this.config.topP,
+      } as any)
+
       const response: CompletionResponse = await withRetry(
         () =>
           provider.complete({
-            messages: this.context.getMessages(),
+            messages: request.messages as Message[] || this.context.getMessages(),
             tools: this.config.tools,
             systemPrompt: undefined,
             temperature: this.config.temperature,
@@ -103,6 +126,8 @@ export class AgentRunner {
         },
         this.config.name
       )
+
+      runAfterProviderCallHooks(response as any)
 
       this.totalPromptTokens += response.usage.promptTokens
       this.totalCompletionTokens += response.usage.completionTokens
@@ -142,8 +167,10 @@ export class AgentRunner {
           const tool = this.config.tools?.find((t) => t.definition.name === tc.name)
           if (!tool) throw new ToolError(tc.name, `Tool "${tc.name}" not found on agent`)
 
-          const result = await tool.execute(tc.args)
-          const resultStr = typeof result === "string" ? result : JSON.stringify(result, null, 2)
+          const hookArgs = runBeforeToolCallHooks(tc.name, tc.args as Record<string, unknown>)
+          const result = await tool.execute(hookArgs)
+          const hookResult = runAfterToolCallHooks(result)
+          const resultStr = typeof hookResult === "string" ? hookResult : JSON.stringify(hookResult, null, 2)
 
           this.context.add({
             role: "tool",
@@ -156,11 +183,11 @@ export class AgentRunner {
             agentId: this.config.id || this.config.name,
             runId,
             tool: tc.name,
-            result,
+            result: hookResult,
             durationMs: Date.now() - startTime,
           } as any)
 
-          options.onToolResult?.(tc.name, result)
+          options.onToolResult?.(tc.name, hookResult)
         } catch (err: any) {
           this.context.add({
             role: "tool",
@@ -210,6 +237,20 @@ export class AgentRunner {
       tokens: this.totalCompletionTokens,
       latencyMs: totalLatency,
     } as any)
+
+    runAfterAgentRunHooks({
+      id: runId,
+      output: finalContent,
+      messages: this.context.getMessages(),
+      usage: {
+        totalTokens: this.totalPromptTokens + this.totalCompletionTokens,
+        promptTokens: this.totalPromptTokens,
+        completionTokens: this.totalCompletionTokens,
+      },
+      latencyMs: totalLatency,
+      toolCalls: this.toolCallCount,
+      finishReason,
+    })
 
     await globalEventBus.emit("agent:complete", {
       agentId: this.config.id || this.config.name,
