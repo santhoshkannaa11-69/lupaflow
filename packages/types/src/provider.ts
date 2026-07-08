@@ -6,9 +6,14 @@ export type ModelRole = "system" | "user" | "assistant" | "tool"
 
 export interface Message {
   role: ModelRole
-  content: string
+  content: string | null
   toolCallId?: string
   name?: string
+  toolCalls?: Array<{
+    id: string
+    type: "function"
+    function: { name: string; arguments: string }
+  }>
 }
 
 export interface ToolCall {

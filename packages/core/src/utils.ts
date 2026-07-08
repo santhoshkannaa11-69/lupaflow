@@ -13,8 +13,8 @@ export function truncate(str: string, maxLength: number): string {
   return str.slice(0, maxLength - 3) + "..."
 }
 
-export function estimateTokens(text: string): number {
-  return Math.ceil(text.length / 4)
+export function estimateTokens(text: string | null | undefined): number {
+  return Math.ceil((text || "").length / 4)
 }
 
 export function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial<T>): T {

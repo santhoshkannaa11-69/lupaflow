@@ -107,7 +107,17 @@ export class AgentRunner {
       this.totalPromptTokens += response.usage.promptTokens
       this.totalCompletionTokens += response.usage.completionTokens
 
-      if (response.content) {
+      if (response.toolCalls.length > 0) {
+        this.context.add({
+          role: "assistant",
+          content: response.content || null,
+          toolCalls: response.toolCalls.map((tc) => ({
+            id: tc.id,
+            type: "function" as const,
+            function: { name: tc.name, arguments: JSON.stringify(tc.args) },
+          })),
+        })
+      } else if (response.content) {
         this.context.add({ role: "assistant", content: response.content })
       }
 

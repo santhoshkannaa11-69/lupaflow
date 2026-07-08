@@ -9,7 +9,6 @@ export class ShellTool extends BaseTool {
       command: {
         type: "string" as const,
         description: "Shell command to execute",
-        required: true,
       },
       cwd: {
         type: "string" as const,

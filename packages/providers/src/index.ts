@@ -8,7 +8,7 @@ providerRegistry.register("google", GoogleProvider)
 providerRegistry.register("groq", GroqProvider)
 
 export { providerRegistry }
-export { LLMProvider } from "./interface"
+export type { LLMProvider } from "./interface"
 export { OpenRouterProvider } from "./openrouter"
 export { GoogleProvider } from "./google"
 export { GroqProvider } from "./groq"

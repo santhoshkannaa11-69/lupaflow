@@ -8,12 +8,10 @@ export class HTTPTool extends BaseTool {
       method: {
         type: "string" as const,
         description: "HTTP method: GET, POST, PUT, DELETE",
-        required: true,
       },
       url: {
         type: "string" as const,
         description: "Request URL",
-        required: true,
       },
       headers: {
         type: "object" as const,

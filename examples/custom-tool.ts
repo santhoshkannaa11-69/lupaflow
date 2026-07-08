@@ -7,7 +7,7 @@ class WeatherTool extends BaseTool {
     name: "weather",
     description: "Get the current weather for a city",
     parameters: {
-      city: { type: "string" as const, description: "City name", required: true },
+        city: { type: "string" as const, description: "City name" },
     },
     required: ["city"],
   }

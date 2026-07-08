@@ -8,7 +8,6 @@ export class SearchTool extends BaseTool {
       query: {
         type: "string" as const,
         description: "Search query",
-        required: true,
       },
       maxResults: {
         type: "number" as const,

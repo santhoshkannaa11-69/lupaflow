@@ -11,6 +11,20 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@lupaflow/types": ["./packages/types/src"],
+      "@lupaflow/core": ["./packages/core/src"],
+      "@lupaflow/secrets": ["./packages/secrets/src"],
+      "@lupaflow/providers": ["./packages/providers/src"],
+      "@lupaflow/tools": ["./packages/tools/src"],
+      "@lupaflow/memory": ["./packages/memory/src"],
+      "@lupaflow/agent": ["./packages/agent/src"],
+      "@lupaflow/workflow": ["./packages/workflow/src"],
+      "@lupaflow/multi-agent": ["./packages/multi-agent/src"],
+      "@lupaflow/observability": ["./packages/observability/src"],
+      "@lupaflow/plugins": ["./packages/plugins/src"],
+      "@lupaflow/cli": ["./packages/cli/src"]
+    }
   }
 }

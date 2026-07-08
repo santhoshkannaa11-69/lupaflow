@@ -1,6 +1,14 @@
-import type { LLMProvider } from "./interface"
-import type { ProviderName, ProviderConfig } from "@lupaflow/types"
+import type { ProviderName, ProviderConfig, CompletionRequest, CompletionResponse } from "@lupaflow/types"
 import { ConfigError } from "@lupaflow/core"
+
+interface LLMProvider {
+  readonly name: string
+  readonly defaultModel: string
+  config: ProviderConfig
+  complete(request: CompletionRequest): Promise<CompletionResponse>
+  getModels?(): Promise<string[]>
+  validateConfig(): boolean
+}
 
 class ProviderRegistry {
   private providers: Map<ProviderName, new (config: ProviderConfig) => LLMProvider> = new Map()

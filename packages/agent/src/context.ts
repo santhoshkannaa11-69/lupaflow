@@ -29,7 +29,7 @@ export class ContextManager {
   }
 
   getTotalTokens(): number {
-    return this.messages.reduce((sum, m) => sum + estimateTokens(m.content), 0)
+    return this.messages.reduce((sum, m) => sum + estimateTokens(m.content || ""), 0)
   }
 
   trim(): void {

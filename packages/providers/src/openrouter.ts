@@ -48,7 +48,21 @@ export class OpenRouterProvider implements LLMProvider {
         messages.push({ role: "system", content: request.systemPrompt })
       }
       for (const m of request.messages) {
-        messages.push({ role: m.role as any, content: m.content })
+        if (m.role === "assistant" && m.toolCalls?.length) {
+          messages.push({
+            role: "assistant",
+            content: m.content as string | null,
+            tool_calls: m.toolCalls as any,
+          })
+        } else if (m.role === "tool") {
+          messages.push({
+            role: "tool",
+            tool_call_id: m.toolCallId || "",
+            content: m.content || "",
+          })
+        } else {
+          messages.push({ role: m.role as any, content: m.content })
+        }
       }
 
       const tools = request.tools?.map((t) => ({

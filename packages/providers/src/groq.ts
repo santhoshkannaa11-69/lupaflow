@@ -7,7 +7,7 @@ import { globalEventBus } from "@lupaflow/core"
 
 export class GroqProvider implements LLMProvider {
   readonly name = "groq"
-  readonly defaultModel = "llama-3.1-70b-versatile"
+  readonly defaultModel = "llama-3.3-70b-versatile"
   config: ProviderConfig
 
   private client: OpenAI
@@ -44,7 +44,21 @@ export class GroqProvider implements LLMProvider {
         messages.push({ role: "system", content: request.systemPrompt })
       }
       for (const m of request.messages) {
-        messages.push({ role: m.role as any, content: m.content })
+        if (m.role === "assistant" && m.toolCalls?.length) {
+          messages.push({
+            role: "assistant",
+            content: m.content as string | null,
+            tool_calls: m.toolCalls as any,
+          })
+        } else if (m.role === "tool") {
+          messages.push({
+            role: "tool",
+            tool_call_id: m.toolCallId || "",
+            content: m.content || "",
+          })
+        } else {
+          messages.push({ role: m.role as any, content: m.content })
+        }
       }
 
       const tools = request.tools?.map((t) => ({

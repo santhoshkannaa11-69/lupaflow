@@ -12,12 +12,10 @@ export class FilesystemTool extends BaseTool {
       action: {
         type: "string" as const,
         description: "Action: read, write, list, delete, mkdir, exists",
-        required: true,
       },
       path: {
         type: "string" as const,
         description: "File or directory path",
-        required: true,
       },
       content: {
         type: "string" as const,

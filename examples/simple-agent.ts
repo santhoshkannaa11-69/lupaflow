@@ -3,7 +3,7 @@ import { Agent } from "@lupaflow/agent"
 const agent = new Agent({
   name: "assistant",
   provider: "groq",
-  model: "llama-3.1-70b-versatile",
+  model: "llama-3.3-70b-versatile",
   systemPrompt: "You are a helpful assistant. Be concise.",
   temperature: 0.7,
 })

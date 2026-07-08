@@ -8,7 +8,6 @@ export class CalculatorTool extends BaseTool {
       expression: {
         type: "string" as const,
         description: "Mathematical expression to evaluate (e.g., '2 + 2 * 3')",
-        required: true,
       },
     },
     required: ["expression"],
